@@ -6,10 +6,11 @@ import { GET_CONTACTS_LIST, GET_EPISODES_LIST } from "../../../APIService/APILin
 import { ContactListState } from "../ContactList";
 import { Col, Layout, Row, Spin } from "antd";
 import moment from "moment";
+import TableEpisodes from "./TableEpisodes";
 
 const { Header, Content } = Layout;
 
-type EpisodeState = {
+export type EpisodeState = {
   id: number;
   name: string;
   air_date: string;
@@ -23,7 +24,7 @@ const ContactDetails: React.FC = () => {
   let { state } = useLocation();
   let { id } = useParams();
   const [character, setCharacter] = useState<ContactListState | null>(state || null);
-  const [episodes, setEpisodes] = useState<EpisodeState | null>(null);
+  const [episodes, setEpisodes] = useState<EpisodeState[] | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchCharacterDetails = useCallback(async () => {
@@ -48,8 +49,7 @@ const ContactDetails: React.FC = () => {
       });
       const response = await Axios.get(`${GET_EPISODES_LIST}/${arr}`);
       if (response.status === 200 && response.data) {
-        console.log(response.data);
-        setEpisodes(response.data.result);
+        setEpisodes(response.data);
         setLoading(false);
       }
     } catch (e) {
@@ -73,9 +73,9 @@ const ContactDetails: React.FC = () => {
 
   return (
     <ContactDetailStyled>
-      <Spin spinning={true}>
+      <Spin spinning={loading}>
         <Layout style={{ minHeight: "100vh" }}>
-          {!loading && character ? (
+          {!loading && character && episodes ? (
             <>
               <Header className="site-header">
                 <Row className="contact-header">
@@ -96,7 +96,7 @@ const ContactDetails: React.FC = () => {
                         <p>Gender</p>
                       </Col>
                       <Col xs={16}>
-                        <p>{character.gender}</p>
+                        <p>{character.gender || "N/A"}</p>
                       </Col>
                     </Row>
                     <Row className="middle-row">
@@ -104,7 +104,7 @@ const ContactDetails: React.FC = () => {
                         <p>Status</p>
                       </Col>
                       <Col xs={16}>
-                        <p>{character.status}</p>
+                        <p>{character.status || "N/A"}</p>
                       </Col>
                     </Row>
                     <Row className="middle-row">
@@ -112,7 +112,7 @@ const ContactDetails: React.FC = () => {
                         <p>Species</p>
                       </Col>
                       <Col xs={16}>
-                        <p>{character.species}</p>
+                        <p>{character.species || "N/A"}</p>
                       </Col>
                     </Row>
                     <Row className="middle-row">
@@ -120,7 +120,7 @@ const ContactDetails: React.FC = () => {
                         <p>Location</p>
                       </Col>
                       <Col xs={16}>
-                        <p>{character.location.name}</p>
+                        <p>{character.location.name || "N/A"}</p>
                       </Col>
                     </Row>
                     <Row className="middle-row">
@@ -139,6 +139,12 @@ const ContactDetails: React.FC = () => {
                         <p>{moment(character.created).format("DD/MM/YYYY HH:mm a")}</p>
                       </Col>
                     </Row>
+                  </div>
+                </div>
+                <div className="personal-details-container">
+                  <p style={{ marginTop: 0 }}>Episodes</p>
+                  <div>
+                    <TableEpisodes dataSource={episodes} />
                   </div>
                 </div>
               </Content>

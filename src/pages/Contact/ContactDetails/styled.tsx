@@ -42,6 +42,7 @@ const ContactDetailStyled = styled.div`
       background-color: #fff;
       padding: 32px;
       border-radius: 8px;
+      margin-bottom: 20px;
 
       .personal-details {
         border: 1px solid #d9d9d9;
