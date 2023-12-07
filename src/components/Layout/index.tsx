@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import { Layout, Menu, MenuProps } from "antd";
 import LayoutStyled from "./styled";
 
 const { Sider } = Layout;
@@ -9,8 +9,17 @@ interface LayoutProps {
   routes: {
     path: string;
     name: string;
+    showOnSideBar?: boolean;
   }[];
-  children: React.ReactNode;
+}
+
+type MenuItem = Required<MenuProps>["items"][number];
+
+function getItem(label: React.ReactNode, key: React.Key): MenuItem {
+  return {
+    key,
+    label,
+  } as MenuItem;
 }
 
 const PageLayout: React.FC<LayoutProps> = (props) => {
@@ -24,18 +33,27 @@ const PageLayout: React.FC<LayoutProps> = (props) => {
 
   const menuKey = isSiderCollapsed ? "collapsed" : "expanded";
 
-  const selectedRouteMenuItem = useMemo(() => {
-    const selected = routes.find((route) => route.path.includes(location.pathname));
+  const sideBarRoute = useMemo(() => {
+    return routes.filter((item) => item.showOnSideBar);
+  }, [routes]);
 
-    return [selected?.path + ""];
-  }, [location.pathname, routes]);
+  const menuItems = useMemo(() => {
+    return sideBarRoute.map((route) => {
+      return getItem(<Link to={route.path}>{route.name}</Link>, route.path);
+    });
+  }, [sideBarRoute]);
+
+  const selectedRouteMenuItem = useMemo(() => {
+    const selectedPath = location.pathname.split("/")[1];
+    return ["/" + selectedPath];
+  }, [location.pathname]);
 
   return (
     <LayoutStyled>
       <Layout style={{ minHeight: "100vh" }}>
         <Sider
           className="ant-sider"
-          breakpoint="md"
+          breakpoint="lg"
           collapsedWidth="0"
           collapsed={isSiderCollapsed}
           onCollapse={handleSiderCollapse}
@@ -49,19 +67,12 @@ const PageLayout: React.FC<LayoutProps> = (props) => {
             mode="inline"
             selectedKeys={selectedRouteMenuItem}
             inlineCollapsed={isSiderCollapsed}
-          >
-            {routes.map((item) => {
-              return (
-                <Menu.Item key={item.path}>
-                  <Link to={item.path}>{item.name}</Link>
-                </Menu.Item>
-              );
-            })}
-          </Menu>
+            items={menuItems}
+          />
         </Sider>
 
         <Layout className="site-layout">
-          <div className="page-content">{props.children}</div>
+          <Outlet />
         </Layout>
       </Layout>
     </LayoutStyled>

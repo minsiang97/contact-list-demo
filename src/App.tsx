@@ -3,15 +3,21 @@ import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import PageLayout from "./components/Layout";
 import { routes } from "./Routes";
-import Home from "./pages/Home";
 
 function App() {
   return (
-    <PageLayout routes={routes}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </PageLayout>
+    <Routes>
+      <Route path="/" element={<PageLayout routes={routes} />}>
+        {routes.map((routeItem) => (
+          <Route path={routeItem.path} element={routeItem.component}>
+            {routeItem.children &&
+              routeItem.children.map((route) => {
+                return <Route path={route.path} element={route.component} />;
+              })}
+          </Route>
+        ))}
+      </Route>
+    </Routes>
   );
 }
 

@@ -8,6 +8,7 @@ const LayoutStyled = styled.div`
     z-index: 3;
     + .site-layout {
       margin-left: 200px;
+      background-color: #f6f9fc;
     }
 
     &.ant-layout-sider-below {
@@ -19,10 +20,6 @@ const LayoutStyled = styled.div`
     .ant-layout-sider-children {
       overflow: hidden;
     }
-  }
-
-  .site-layout {
-    background-color: #f6f9fc;
   }
 
   .title {
