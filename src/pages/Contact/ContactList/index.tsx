@@ -1,12 +1,13 @@
 import { Button, Col, Input, RadioChangeEvent, Row, Space, Spin } from "antd";
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import ContactListStyled from "./styled";
 import Axios from "../../../APIService/axios";
 import { GET_CONTACTS_LIST } from "../../../APIService/APILinks";
 import DropDown from "../../../components/Dropdown";
 import { CloseOutlined } from "@ant-design/icons";
 import { ContactContext } from "../../../config/context/ContactContextProvider";
+import debounce from "lodash/debounce";
 
 export type ContactListState = {
   id: number;
@@ -70,25 +71,69 @@ const gender: RadioProps[] = [
 
 const ContactList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [bottomLoading, setBottomLoading] = useState<boolean>(false);
   const [radioStatusOpen, setRadioStatusOpen] = useState<boolean>(false);
   const [radioGenderOpen, setRadioGenderOpen] = useState<boolean>(false);
   const [statusValue, setStatusValue] = useState<string>("");
   const [genderValue, setGenderValue] = useState<string>("");
   const [searchValue, setSearchValue] = useState<string>("");
-  const [contactList, setContactList] = useState<ContactListState[] | null>(null);
-
+  const [nextPage, setNextPage] = useState<string>("");
+  const [contactList, setContactList] = useState<ContactListState[] | []>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
   const contactState = useContext(ContactContext);
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fetchNextPage = useCallback(
+    debounce(async () => {
+      setBottomLoading(true);
+      try {
+        const response = await Axios.get(nextPage);
+        if (response.status === 200 && response.data) {
+          setNextPage(response.data.info.next);
+          setContactList((prevData) => [...prevData, ...response.data.results]);
+        }
+        setBottomLoading(false);
+      } catch (e) {
+        console.error(e);
+        setBottomLoading(false);
+      }
+    }, 400),
+    [nextPage]
+  );
+
+  const onScroll = useCallback(() => {
+    if (containerRef.current) {
+      const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
+      if (Math.ceil(scrollTop + clientHeight) >= scrollHeight && nextPage) {
+        fetchNextPage();
+      }
+    }
+  }, [nextPage, fetchNextPage]);
 
   useEffect(() => {
     getContacts();
   }, []);
+
+  useEffect(() => {
+    const currentContainerRef = containerRef.current;
+    if (currentContainerRef) {
+      currentContainerRef.addEventListener("scroll", onScroll);
+    }
+    return () => {
+      if (currentContainerRef) {
+        currentContainerRef.removeEventListener("scroll", onScroll);
+      }
+    };
+  }, [onScroll]);
 
   const getContacts = async () => {
     try {
       setLoading(true);
       const response = await Axios.get(GET_CONTACTS_LIST);
       if (response.status === 200 && response.data) {
+        setNextPage(response.data.info.next);
         setContactList(response.data.results);
         setLoading(false);
       }
@@ -142,7 +187,7 @@ const ContactList: React.FC = () => {
   return (
     <ContactListStyled>
       <Row>
-        <Col className="list-container" flex={`${contactState?.isMobile ? "100vw" : "360px"}`}>
+        <Col ref={containerRef} className="list-container" flex={`${contactState?.isMobile ? "100vw" : "360px"}`}>
           <div className="search-bar-container">
             <p className="contact-title">Contacts</p>
             <Input
@@ -160,7 +205,7 @@ const ContactList: React.FC = () => {
                   open={radioStatusOpen}
                   setOpen={setRadioStatusOpen}
                   onChange={(e: RadioChangeEvent) => onClickStatusChanged(e)}
-                  selectedValue={statusValue}
+                  selectedValue={statusValue ? statusValue[0].toUpperCase() + statusValue.substring(1) : ""}
                 />
                 <DropDown
                   title="Gender"
@@ -169,15 +214,17 @@ const ContactList: React.FC = () => {
                   open={radioGenderOpen}
                   setOpen={setRadioGenderOpen}
                   onChange={(e: RadioChangeEvent) => onClickGenderChanged(e)}
-                  selectedValue={genderValue}
+                  selectedValue={genderValue ? genderValue[0]?.toUpperCase() + genderValue?.substring(1) : ""}
                 />
-                <Button type="text" onClick={clearFilter}>
-                  <Space>
-                    Clear filter
-                    <CloseOutlined />
-                  </Space>
-                </Button>
               </Space>
+            </Row>
+            <Row style={{ marginTop: 10 }}>
+              <Button type="text" onClick={clearFilter}>
+                <Space>
+                  Clear filter
+                  <CloseOutlined />
+                </Space>
+              </Button>
             </Row>
           </div>
           <Spin spinning={loading}>
@@ -186,7 +233,7 @@ const ContactList: React.FC = () => {
               filteredContactList.map((item, index) => {
                 return (
                   <div
-                    className="contact"
+                    className={`contact ${id && item.id === parseInt(id) ? "selectedContact" : undefined}`}
                     style={index === filteredContactList.length - 1 ? undefined : { borderBottom: "1px solid #d9d9d9" }}
                     key={item.id}
                     onClick={() => navigateToDetails(item)}
@@ -200,6 +247,7 @@ const ContactList: React.FC = () => {
                 );
               })}
           </Spin>
+          {bottomLoading && <Spin style={{ display: "flex", justifyContent: "center" }} spinning={bottomLoading} />}
         </Col>
         <Col className="details-container" flex="1">
           <Outlet />

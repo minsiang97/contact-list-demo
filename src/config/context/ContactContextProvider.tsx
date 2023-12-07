@@ -13,13 +13,17 @@ interface ContactContextProp {
 }
 
 const ContactContextProvider: React.FC<ContactContextProp> = ({ children }) => {
-  const [isMobile, setIsMobile] = useState(window.matchMedia("(max-width: 768px)").matches);
+  const [isMobile, setIsMobile] = useState(window.matchMedia("(max-width: 840px)").matches);
 
   const handleResize = () => {
-    setIsMobile(window.innerWidth < 768);
+    setIsMobile(window.innerWidth < 840);
   };
   useEffect(() => {
     window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   });
 
   return (

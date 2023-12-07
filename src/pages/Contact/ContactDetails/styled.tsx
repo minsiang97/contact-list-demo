@@ -11,6 +11,17 @@ const ContactDetailStyled = styled.div`
     height: fit-content;
     border-bottom: 1px solid #d9d9d9;
 
+    .back-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 5px;
+      margin: 0px;
+      border: 1px solid #d9d9d9;
+      display: flex;
+      cursor: pointer;
+    }
+
     .contact-header {
       display: flex;
       flex-direction: row;
@@ -52,15 +63,18 @@ const ContactDetailStyled = styled.div`
         .top-row {
           padding: 0px 16px 16px 16px;
           border-bottom: 1px solid #d9d9d9;
+          justify-content: center;
         }
 
         .middle-row {
           padding: 16px 16px 16px 16px;
           border-bottom: 1px solid #d9d9d9;
+          justify-content: center;
         }
 
         .last-row {
           padding: 16px 16px 0px 16px;
+          justify-content: center;
         }
       }
     }

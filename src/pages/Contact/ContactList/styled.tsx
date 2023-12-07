@@ -5,7 +5,7 @@ const ContactListStyled = styled.div`
     border-right: 1px solid #d9d9d9;
     background-color: #fff;
     height: 100vh;
-    overflow-y: auto;
+    overflow-y: scroll;
 
     .search-bar-container {
       padding: 16px;
@@ -23,12 +23,17 @@ const ContactListStyled = styled.div`
       }
     }
 
+    .selectedContact {
+      background-color: #1890ff;
+      color: #fff;
+    }
+
     .contact {
       padding: 16px;
       display: flex;
       flex-direction: row;
       align-items: center;
-
+      cursor: pointer;
       img {
         border-radius: 50%;
         width: 100px;

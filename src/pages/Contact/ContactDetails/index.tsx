@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ContactDetailStyled from "./styled";
 import Axios from "../../../APIService/axios";
 import { GET_CONTACTS_LIST, GET_EPISODES_LIST } from "../../../APIService/APILinks";
@@ -7,6 +7,8 @@ import { ContactListState } from "../ContactList";
 import { Col, Layout, Row, Spin } from "antd";
 import moment from "moment";
 import TableEpisodes from "./TableEpisodes";
+import { ContactContext } from "../../../config/context/ContactContextProvider";
+import { LeftOutlined } from "@ant-design/icons";
 
 const { Header, Content } = Layout;
 
@@ -26,6 +28,8 @@ const ContactDetails: React.FC = () => {
   const [character, setCharacter] = useState<ContactListState | null>(state || null);
   const [episodes, setEpisodes] = useState<EpisodeState[] | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
+  const contactContext = useContext(ContactContext);
+  const navigate = useNavigate();
 
   const fetchCharacterDetails = useCallback(async () => {
     try {
@@ -49,7 +53,12 @@ const ContactDetails: React.FC = () => {
       });
       const response = await Axios.get(`${GET_EPISODES_LIST}/${arr}`);
       if (response.status === 200 && response.data) {
-        setEpisodes(response.data);
+        if (Array.isArray(response.data)) {
+          setEpisodes(response.data);
+        } else {
+          setEpisodes([response.data]);
+        }
+
         setLoading(false);
       }
     } catch (e) {
@@ -71,6 +80,10 @@ const ContactDetails: React.FC = () => {
     }
   }, [character, fetchCharacterEpisodes]);
 
+  const navigateBack = () => {
+    navigate(-1);
+  };
+
   return (
     <ContactDetailStyled>
       <Spin spinning={loading}>
@@ -78,6 +91,11 @@ const ContactDetails: React.FC = () => {
           {!loading && character && episodes ? (
             <>
               <Header className="site-header">
+                {contactContext?.isMobile ? (
+                  <div className="back-button" onClick={navigateBack}>
+                    <LeftOutlined color="black" />
+                  </div>
+                ) : null}
                 <Row className="contact-header">
                   <Col xs={8}>
                     <img src={character.image} alt="character-img" style={{ verticalAlign: "middle" }} />
@@ -92,50 +110,50 @@ const ContactDetails: React.FC = () => {
                   <p style={{ marginTop: 0 }}>Personal info</p>
                   <div className="personal-details">
                     <Row className="top-row">
-                      <Col xs={8}>
+                      <Col flex="1 1 100px">
                         <p>Gender</p>
                       </Col>
-                      <Col xs={16}>
+                      <Col flex="auto">
                         <p>{character.gender || "N/A"}</p>
                       </Col>
                     </Row>
                     <Row className="middle-row">
-                      <Col xs={8}>
+                      <Col flex="1 1 100px">
                         <p>Status</p>
                       </Col>
-                      <Col xs={16}>
+                      <Col flex="auto">
                         <p>{character.status || "N/A"}</p>
                       </Col>
                     </Row>
                     <Row className="middle-row">
-                      <Col xs={8}>
+                      <Col flex="1 1 100px">
                         <p>Species</p>
                       </Col>
-                      <Col xs={16}>
+                      <Col flex="auto">
                         <p>{character.species || "N/A"}</p>
                       </Col>
                     </Row>
                     <Row className="middle-row">
-                      <Col xs={8}>
+                      <Col flex="1 1 100px">
                         <p>Location</p>
                       </Col>
-                      <Col xs={16}>
+                      <Col flex="auto">
                         <p>{character.location.name || "N/A"}</p>
                       </Col>
                     </Row>
                     <Row className="middle-row">
-                      <Col xs={8}>
+                      <Col flex="1 1 100px">
                         <p>Origin</p>
                       </Col>
-                      <Col xs={16}>
+                      <Col flex="auto">
                         <p>{character.origin.name}</p>
                       </Col>
                     </Row>
                     <Row className="last-row">
-                      <Col xs={8}>
+                      <Col flex="1 1 100px">
                         <p>Created Date</p>
                       </Col>
-                      <Col xs={16}>
+                      <Col flex="auto">
                         <p>{moment(character.created).format("DD/MM/YYYY HH:mm a")}</p>
                       </Col>
                     </Row>

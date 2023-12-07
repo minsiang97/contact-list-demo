@@ -8,14 +8,15 @@ type routeProps = {
   name: string;
   showOnSideBar?: boolean;
   index?: boolean;
+  hideParentsInMobile?: boolean;
   children?: {
     path: string;
     component: React.ReactElement;
     index?: boolean;
   }[];
-}[];
+};
 
-export const routes: routeProps = [
+export const routes: routeProps[] = [
   {
     path: "/",
     component: <Home />,
@@ -28,6 +29,7 @@ export const routes: routeProps = [
     component: <ContactList />,
     name: "Contact",
     showOnSideBar: true,
+    hideParentsInMobile: true,
     children: [
       {
         path: ":id",

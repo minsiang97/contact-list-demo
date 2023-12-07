@@ -14,7 +14,6 @@ const getColumnsTranslated = () => [
     title: "Air Date",
     dataIndex: "air_date",
     key: "air_date",
-    render: (value: string) => moment(value).format("DD/MM/YYYY HH:mm a"),
   },
   {
     title: "Episode",
