@@ -5,11 +5,36 @@ const ContactListStyled = styled.div`
     border-right: 1px solid #d9d9d9;
     background-color: #fff;
     height: 100vh;
-    overflow-y: scroll;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+
+    .filter-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    .loading-spinner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      .ant-spin-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+    }
 
     .search-bar-container {
       padding: 16px;
       border-bottom: 1px solid #d9d9d9;
+      position: sticky;
+      top: 0px;
+      z-index: 1;
+      background-color: #fff;
+
       p {
         margin-top: 0px;
       }
@@ -34,6 +59,7 @@ const ContactListStyled = styled.div`
       flex-direction: row;
       align-items: center;
       cursor: pointer;
+
       img {
         border-radius: 50%;
         width: 100px;

@@ -25,11 +25,15 @@ const DropDown: React.FC<DropDownProps> = (props) => {
             <Radio.Group
               onChange={onChange}
               style={{ backgroundColor: "white", padding: 16, borderRadius: 26 }}
-              value={selectedValue}
+              value={selectedValue ? selectedValue.toLowerCase() : ""}
             >
               <Space direction="vertical">
                 {items.map((item) => {
-                  return <Radio value={item.value}>{item.label}</Radio>;
+                  return (
+                    <Radio value={item.value} key={item.value}>
+                      {item.label}
+                    </Radio>
+                  );
                 })}
               </Space>
             </Radio.Group>

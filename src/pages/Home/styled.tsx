@@ -5,9 +5,14 @@ const HomeStyled = styled.div`
   .container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
+    position: relative;
+    .contact-button {
+      position: absolute;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 `;
 

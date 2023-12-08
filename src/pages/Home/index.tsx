@@ -1,15 +1,25 @@
 import React from "react";
 import HomeStyled from "./styled";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { rnm_wallpaper } from "../../images";
+import { Button } from "antd";
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <HomeStyled>
-      <div className="container">
-        <p>Welcome to Rick and Morty's contact list</p>
-        <p>
-          Click here to go to <Link to="/contact">Contacts</Link>
-        </p>
+      <div
+        className="container"
+        style={{
+          backgroundImage: `url(${rnm_wallpaper})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <Button className="contact-button" type="primary" onClick={() => navigate("/contact")} size="large">
+          Click here to go to Contact
+        </Button>
       </div>
     </HomeStyled>
   );
