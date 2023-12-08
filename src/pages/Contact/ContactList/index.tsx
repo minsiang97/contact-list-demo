@@ -207,7 +207,7 @@ const ContactList: React.FC = () => {
         <Col
           ref={containerRef}
           className="list-container"
-          flex={`${contactState?.isMobile ? "100vw" : "375px"}`}
+          flex={`${contactState?.isMobile ? "100vw" : "370px"}`}
           style={loading ? { overflow: "hidden" } : undefined}
         >
           <div className="search-bar-container">
