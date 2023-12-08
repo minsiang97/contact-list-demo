@@ -6,7 +6,7 @@ const Home: React.FC = () => {
   return (
     <HomeStyled>
       <div className="container">
-        <p>Welcome to contact list</p>
+        <p>Welcome to Rick and Morty's contact list</p>
         <p>
           Click here to go to <Link to="/contact">Contacts</Link>
         </p>

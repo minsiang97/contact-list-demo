@@ -13,19 +13,19 @@ function App() {
         {routes.map((routeItem) => {
           if (routeItem.hideParentsInMobile && contactContext?.isMobile) {
             return (
-              <Route path={routeItem.path}>
+              <Route path={routeItem.path} key={routeItem.path}>
                 <Route index element={routeItem.component} />
                 {routeItem.children?.map((item) => {
-                  return <Route path={item.path} element={item.component} />;
+                  return <Route path={item.path} element={item.component} key={item.path} />;
                 })}
               </Route>
             );
           }
           return (
-            <Route path={routeItem.path} element={routeItem.component}>
+            <Route path={routeItem.path} element={routeItem.component} key={routeItem.path}>
               {routeItem.children &&
                 routeItem.children.map((route) => {
-                  return <Route path={route.path} element={route.component} />;
+                  return <Route path={route.path} element={route.component} key={route.path} />;
                 })}
             </Route>
           );

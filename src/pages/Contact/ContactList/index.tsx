@@ -181,7 +181,11 @@ const ContactList: React.FC = () => {
   };
 
   const navigateToDetails = (character: ContactListState) => {
-    navigate(`/contact/${character.id}`, { state: character });
+    if (id) {
+      navigate(`/contact/${character.id}`, { state: character, replace: true });
+    } else {
+      navigate(`/contact/${character.id}`, { state: character });
+    }
   };
 
   return (

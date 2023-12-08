@@ -31,8 +31,6 @@ const PageLayout: React.FC<LayoutProps> = (props) => {
     setIsSiderCollapsed(collapsed);
   };
 
-  const menuKey = isSiderCollapsed ? "collapsed" : "expanded";
-
   const sideBarRoute = useMemo(() => {
     return routes.filter((item) => item.showOnSideBar);
   }, [routes]);
@@ -61,14 +59,7 @@ const PageLayout: React.FC<LayoutProps> = (props) => {
           <div>
             <p className="title">Rick and Morty</p>
           </div>
-          <Menu
-            key={menuKey}
-            theme="dark"
-            mode="inline"
-            selectedKeys={selectedRouteMenuItem}
-            inlineCollapsed={isSiderCollapsed}
-            items={menuItems}
-          />
+          <Menu theme="dark" mode="inline" selectedKeys={selectedRouteMenuItem} items={menuItems} />
         </Sider>
 
         <Layout className="site-layout">
