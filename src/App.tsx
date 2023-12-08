@@ -1,25 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext } from "react";
+import { Routes, Route } from "react-router-dom";
+import "./App.css";
+import PageLayout from "./components/Layout";
+import { routes } from "./Routes";
+import { ContactContext } from "./config/context/ContactContextProvider";
 
 function App() {
+  const contactContext = useContext(ContactContext);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/" element={<PageLayout routes={routes} />}>
+        {routes.map((routeItem) => {
+          if (routeItem.hideParentsInMobile && contactContext?.isMobile) {
+            return (
+              <Route path={routeItem.path} key={routeItem.path}>
+                <Route index element={routeItem.component} />
+                {routeItem.children?.map((item) => {
+                  return <Route path={item.path} element={item.component} key={item.path} />;
+                })}
+              </Route>
+            );
+          }
+          return (
+            <Route path={routeItem.path} element={routeItem.component} key={routeItem.path}>
+              {routeItem.children &&
+                routeItem.children.map((route) => {
+                  return <Route path={route.path} element={route.component} key={route.path} />;
+                })}
+            </Route>
+          );
+        })}
+      </Route>
+    </Routes>
   );
 }
 
