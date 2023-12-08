@@ -182,13 +182,11 @@ const ContactList: React.FC = () => {
   };
 
   const clearFilter = () => {
-    if (genderValue || statusValue || searchValue) {
-      setGenderValue("");
-      setStatusValue("");
-      setSearchValue("");
-      if (containerRef.current) containerRef.current.scrollTop = 0;
-      getContacts();
-    }
+    setGenderValue("");
+    setStatusValue("");
+    setSearchValue("");
+    if (containerRef.current) containerRef.current.scrollTop = 0;
+    getContacts();
   };
 
   const onChangeText = (e: string) => {
@@ -205,11 +203,11 @@ const ContactList: React.FC = () => {
 
   return (
     <ContactListStyled>
-      <Row>
+      <Row wrap={false}>
         <Col
           ref={containerRef}
           className="list-container"
-          flex={`${contactState?.isMobile ? "100vw" : "380px"}`}
+          flex={`${contactState?.isMobile ? "100vw" : "375px"}`}
           style={loading ? { overflow: "hidden" } : undefined}
         >
           <div className="search-bar-container">
@@ -242,12 +240,14 @@ const ContactList: React.FC = () => {
                   selectedValue={genderValue ? genderValue[0]?.toUpperCase() + genderValue?.substring(1) : ""}
                 />
               </Space>
-              <Button type="text" onClick={clearFilter}>
-                <Space>
-                  Clear
-                  <CloseOutlined />
-                </Space>
-              </Button>
+              {searchValue || statusValue || genderValue ? (
+                <Button size="small" type="text" onClick={clearFilter}>
+                  <Space>
+                    Clear Filters
+                    <CloseOutlined />
+                  </Space>
+                </Button>
+              ) : null}
             </Row>
           </div>
           <Spin spinning={loading} wrapperClassName="loading-spinner">
@@ -289,7 +289,7 @@ const ContactList: React.FC = () => {
           </Spin>
           {bottomLoading && <Spin style={{ display: "flex", justifyContent: "center" }} spinning={bottomLoading} />}
         </Col>
-        <Col className="details-container" flex="1">
+        <Col className="details-container" flex="auto">
           <Outlet />
         </Col>
       </Row>

@@ -37,7 +37,7 @@ const TableEpisodes: React.FC<TableEpisodesProps> = (props) => {
   const columns = useMemo(() => getColumnsTranslated(), []);
   return (
     <>
-      <Table rowKey={(record) => record.id} columns={columns} dataSource={dataSource} scroll={{ x: 300 }} />
+      <Table rowKey={(record) => record.id} columns={columns} dataSource={dataSource} scroll={{ x: 800 }} />
     </>
   );
 };

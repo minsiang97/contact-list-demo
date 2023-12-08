@@ -45,7 +45,7 @@ const DropDown: React.FC<DropDownProps> = (props) => {
         setOpen(flag);
       }}
     >
-      <Button onClick={() => setOpen(!open)}>
+      <Button size="small" onClick={() => setOpen(!open)}>
         <Space>
           {selectedValue || title}
           <DownOutlined />
